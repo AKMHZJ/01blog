@@ -4,6 +4,7 @@ import { storage } from "./utils/storage";
 import { initializeMockData } from "./utils/mockData";
 import { Header } from "./components/Header";
 import { LoginPage } from "./components/LoginPage";
+import LandingPage from "./components/LandingPage";
 import { FeedPage } from "./components/FeedPage";
 import { MyBlogPage } from "./components/MyBlogPage";
 import { UserProfilePage } from "./components/UserProfilePage";
@@ -23,6 +24,7 @@ type PageType =
   | "userprofile";
 
 export default function App() {
+  const [showLanding, setShowLanding] = useState<boolean>(true);
   const [currentUser, setCurrentUser] = useState<User | null>(
     null,
   );
@@ -75,6 +77,10 @@ export default function App() {
     setSelectedPost(null);
     setCurrentPage("feed");
   };
+
+  if (showLanding) {
+    return <LandingPage onContinue={() => setShowLanding(false)} />;
+  }
 
   if (!currentUser) {
     return <LoginPage onLogin={handleLogin} />;
