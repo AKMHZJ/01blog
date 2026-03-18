@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1620" width="960" font-family="Georgia, serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow-return" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="1620" fill="#fafaf8"/>
+
+  <!-- Title -->
+  <text x="480" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1a1a1a" font-family="Georgia, serif">01blog — End-to-End Workflow</text>
+  <text x="480" y="58" text-anchor="middle" font-size="12" fill="#888" font-family="Georgia, serif">Full-stack social blogging platform sequence diagram</text>
+
+  <!-- Participant columns: x positions -->
+  <!-- User=80, Admin=200, Frontend=340, Backend=510, DB=680, Cloudinary=840 -->
+
+  <!-- Participant boxes -->
+  <!-- User -->
+  <rect x="30" y="72" width="100" height="36" rx="6" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1"/>
+  <text x="80" y="95" text-anchor="middle" font-size="12" font-weight="600" fill="#26215C" font-family="Georgia, serif">User</text>
+  <!-- Admin -->
+  <rect x="150" y="72" width="100" height="36" rx="6" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
+  <text x="200" y="95" text-anchor="middle" font-size="12" font-weight="600" fill="#4A1B0C" font-family="Georgia, serif">Admin</text>
+  <!-- Angular Frontend -->
+  <rect x="285" y="72" width="110" height="36" rx="6" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+  <text x="340" y="89" text-anchor="middle" font-size="11" font-weight="600" fill="#04342C" font-family="Georgia, serif">Angular</text>
+  <text x="340" y="103" text-anchor="middle" font-size="11" font-weight="600" fill="#04342C" font-family="Georgia, serif">Frontend</text>
+  <!-- Spring Boot Backend -->
+  <rect x="455" y="72" width="110" height="36" rx="6" fill="#E6F1FB" stroke="#378ADD" stroke-width="1"/>
+  <text x="510" y="89" text-anchor="middle" font-size="11" font-weight="600" fill="#042C53" font-family="Georgia, serif">Spring Boot</text>
+  <text x="510" y="103" text-anchor="middle" font-size="11" font-weight="600" fill="#042C53" font-family="Georgia, serif">Backend</text>
+  <!-- PostgreSQL DB -->
+  <rect x="630" y="72" width="100" height="36" rx="6" fill="#EAF3DE" stroke="#639922" stroke-width="1"/>
+  <text x="680" y="95" text-anchor="middle" font-size="12" font-weight="600" fill="#173404" font-family="Georgia, serif">PostgreSQL</text>
+  <!-- Cloudinary -->
+  <rect x="790" y="72" width="100" height="36" rx="6" fill="#FAEEDA" stroke="#BA7517" stroke-width="1"/>
+  <text x="840" y="95" text-anchor="middle" font-size="12" font-weight="600" fill="#412402" font-family="Georgia, serif">Cloudinary</text>
+
+  <!-- Lifelines -->
+  <line x1="80" y1="108" x2="80" y2="1600" stroke="#C0BFBA" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="200" y1="108" x2="200" y2="1600" stroke="#C0BFBA" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="340" y1="108" x2="340" y2="1600" stroke="#C0BFBA" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="510" y1="108" x2="510" y2="1600" stroke="#C0BFBA" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="680" y1="108" x2="680" y2="1600" stroke="#C0BFBA" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="840" y1="108" x2="840" y2="1600" stroke="#C0BFBA" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- ============================== -->
+  <!-- SECTION 1: Authentication Flow -->
+  <!-- ============================== -->
+  <rect x="18" y="118" width="924" height="510" rx="8" fill="#EEEDFE" fill-opacity="0.3" stroke="#7F77DD" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="30" y="136" font-size="12" font-weight="700" fill="#534AB7" font-family="Georgia, serif">Authentication flow</text>
+
+  <!-- 1. User signs up -->
+  <text x="86" y="160" font-size="11" fill="#333" font-family="Georgia, serif">Sign up (email, password)</text>
+  <line x1="80" y1="165" x2="334" y2="165" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- 2. Frontend → Backend register -->
+  <text x="346" y="185" font-size="11" fill="#333" font-family="Georgia, serif">POST /api/auth/register</text>
+  <line x1="340" y1="190" x2="504" y2="190" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Activation bar: BE -->
+  <rect x="506" y="190" width="8" height="80" rx="2" fill="#378ADD" fill-opacity="0.5"/>
+
+  <!-- Note: BCrypt hashing -->
+  <rect x="520" y="197" width="120" height="22" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.8"/>
+  <text x="580" y="212" text-anchor="middle" font-size="10" fill="#444" font-family="Georgia, serif">BCrypt hashing</text>
+
+  <!-- 3. Backend → DB INSERT -->
+  <text x="516" y="234" font-size="11" fill="#333" font-family="Georgia, serif">INSERT user record</text>
+  <line x1="514" y1="238" x2="674" y2="238" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- DB return -->
+  <text x="516" y="258" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">User saved</text>
+  <line x1="674" y1="262" x2="516" y2="262" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- 4. BE → FE 201 Created -->
+  <text x="346" y="280" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">201 Created</text>
+  <line x1="506" y1="284" x2="346" y2="284" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+  <!-- FE → User success -->
+  <text x="86" y="300" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Registration success</text>
+  <line x1="334" y1="304" x2="86" y2="304" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- Divider -->
+  <line x1="30" y1="320" x2="930" y2="320" stroke="#C8C5E8" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+  <!-- 5. User logs in -->
+  <text x="86" y="342" font-size="11" fill="#333" font-family="Georgia, serif">Log in (credentials)</text>
+  <line x1="80" y1="347" x2="334" y2="347" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- 6. Frontend → Backend login -->
+  <text x="346" y="367" font-size="11" fill="#333" font-family="Georgia, serif">POST /api/auth/login</text>
+  <line x1="340" y1="372" x2="504" y2="372" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Activation bar: BE -->
+  <rect x="506" y="372" width="8" height="100" rx="2" fill="#378ADD" fill-opacity="0.5"/>
+
+  <!-- 7. Backend → DB SELECT -->
+  <text x="516" y="395" font-size="11" fill="#333" font-family="Georgia, serif">SELECT user by email</text>
+  <line x1="514" y1="400" x2="674" y2="400" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- DB return -->
+  <text x="516" y="420" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">User record</text>
+  <line x1="674" y1="424" x2="516" y2="424" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- Note: JWT generated -->
+  <rect x="520" y="430" width="160" height="22" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.8"/>
+  <text x="600" y="445" text-anchor="middle" font-size="10" fill="#444" font-family="Georgia, serif">JWT generated · Stateless session</text>
+
+  <!-- 8. BE → FE token -->
+  <text x="346" y="466" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">200 OK + JWT token</text>
+  <line x1="506" y1="470" x2="346" y2="470" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- FE → User token stored -->
+  <text x="86" y="490" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Token stored in client</text>
+  <line x1="334" y1="494" x2="86" y2="494" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- Note: Interceptor -->
+  <rect x="240" y="508" width="320" height="22" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.8"/>
+  <text x="400" y="523" text-anchor="middle" font-size="10" fill="#444" font-family="Georgia, serif">All subsequent requests attach JWT via HTTP Interceptor</text>
+
+  <!-- ================================= -->
+  <!-- SECTION 2: Content Creation Flow  -->
+  <!-- ================================= -->
+  <rect x="18" y="644" width="924" height="320" rx="8" fill="#E1F5EE" fill-opacity="0.3" stroke="#1D9E75" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="30" y="662" font-size="12" font-weight="700" fill="#0F6E56" font-family="Georgia, serif">Content creation flow</text>
+
+  <!-- 1. User creates post -->
+  <text x="86" y="686" font-size="11" fill="#333" font-family="Georgia, serif">Create post with media</text>
+  <line x1="80" y1="691" x2="334" y2="691" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- 2. FE → BE post -->
+  <text x="346" y="711" font-size="11" fill="#333" font-family="Georgia, serif">POST /api/posts (JWT in header)</text>
+  <line x1="340" y1="716" x2="504" y2="716" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Activation bar: BE -->
+  <rect x="506" y="716" width="8" height="160" rx="2" fill="#378ADD" fill-opacity="0.5"/>
+
+  <!-- Note: security filter -->
+  <rect x="520" y="722" width="160" height="22" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.8"/>
+  <text x="600" y="737" text-anchor="middle" font-size="10" fill="#444" font-family="Georgia, serif">Security filter validates JWT</text>
+
+  <!-- 3. BE → Cloudinary upload -->
+  <text x="516" y="760" font-size="11" fill="#333" font-family="Georgia, serif">Upload media file</text>
+  <line x1="514" y1="765" x2="834" y2="765" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Cloudinary return -->
+  <text x="516" y="785" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Media URL returned</text>
+  <line x1="834" y1="789" x2="516" y2="789" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- 4. BE → DB INSERT post -->
+  <text x="516" y="810" font-size="11" fill="#333" font-family="Georgia, serif">INSERT post (content + media URL)</text>
+  <line x1="514" y1="815" x2="674" y2="815" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- DB return -->
+  <text x="516" y="835" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Post saved</text>
+  <line x1="674" y1="839" x2="516" y2="839" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- 5. BE → FE 201 Created -->
+  <text x="346" y="858" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">201 Created</text>
+  <line x1="506" y1="862" x2="346" y2="862" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+  <!-- FE → User post published -->
+  <text x="86" y="878" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Post published</text>
+  <line x1="334" y1="882" x2="86" y2="882" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- ================================= -->
+  <!-- SECTION 3: Feed Consumption Flow  -->
+  <!-- ================================= -->
+  <rect x="18" y="978" width="924" height="240" rx="8" fill="#EAF3DE" fill-opacity="0.3" stroke="#639922" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="30" y="996" font-size="12" font-weight="700" fill="#3B6D11" font-family="Georgia, serif">Feed consumption flow</text>
+
+  <!-- 1. User requests feed -->
+  <text x="86" y="1020" font-size="11" fill="#333" font-family="Georgia, serif">Request feed</text>
+  <line x1="80" y1="1025" x2="334" y2="1025" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- 2. FE → BE GET feed -->
+  <text x="346" y="1045" font-size="11" fill="#333" font-family="Georgia, serif">GET /api/feed (JWT in header)</text>
+  <line x1="340" y1="1050" x2="504" y2="1050" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Activation bar: BE -->
+  <rect x="506" y="1050" width="8" height="100" rx="2" fill="#378ADD" fill-opacity="0.5"/>
+
+  <!-- 3. BE → DB query -->
+  <text x="516" y="1074" font-size="11" fill="#333" font-family="Georgia, serif">SELECT posts from followed users</text>
+  <line x1="514" y1="1079" x2="674" y2="1079" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- DB return -->
+  <text x="516" y="1099" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Posts list</text>
+  <line x1="674" y1="1103" x2="516" y2="1103" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- 4. BE → FE posts -->
+  <text x="346" y="1122" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">200 OK + posts payload</text>
+  <line x1="506" y1="1126" x2="346" y2="1126" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+  <!-- FE → User feed displayed -->
+  <text x="86" y="1145" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Feed displayed</text>
+  <line x1="334" y1="1149" x2="86" y2="1149" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- ================================= -->
+  <!-- SECTION 4: Moderation Flow        -->
+  <!-- ================================= -->
+  <rect x="18" y="1230" width="924" height="360" rx="8" fill="#FAECE7" fill-opacity="0.3" stroke="#D85A30" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="30" y="1248" font-size="12" font-weight="700" fill="#993C1D" font-family="Georgia, serif">Moderation flow (Admin)</text>
+
+  <!-- 1. Admin → FE dashboard -->
+  <text x="207" y="1272" font-size="11" fill="#333" font-family="Georgia, serif">Access Admin Dashboard</text>
+  <line x1="200" y1="1277" x2="334" y2="1277" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Note: AdminGuard -->
+  <rect x="28" y="1284" width="140" height="22" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.8"/>
+  <text x="98" y="1299" text-anchor="middle" font-size="10" fill="#444" font-family="Georgia, serif">AdminGuard: ROLE_ADMIN</text>
+
+  <!-- 2. FE → BE dashboard -->
+  <text x="346" y="1322" font-size="11" fill="#333" font-family="Georgia, serif">GET /api/admin/dashboard (JWT)</text>
+  <line x1="340" y1="1327" x2="504" y2="1327" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Activation bar: BE -->
+  <rect x="506" y="1327" width="8" height="80" rx="2" fill="#378ADD" fill-opacity="0.5"/>
+
+  <!-- Note: verify role -->
+  <rect x="520" y="1334" width="140" height="22" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.8"/>
+  <text x="590" y="1349" text-anchor="middle" font-size="10" fill="#444" font-family="Georgia, serif">Verify ROLE_ADMIN claim</text>
+
+  <!-- 3. BE → FE dashboard data -->
+  <text x="346" y="1372" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Dashboard data</text>
+  <line x1="506" y1="1376" x2="346" y2="1376" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+  <!-- FE → Admin dashboard displayed -->
+  <text x="207" y="1395" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Dashboard displayed</text>
+  <line x1="334" y1="1399" x2="206" y2="1399" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- Divider -->
+  <line x1="30" y1="1415" x2="930" y2="1415" stroke="#F0C0A0" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+  <!-- 4. Admin → FE ban/delete action -->
+  <text x="207" y="1436" font-size="11" fill="#333" font-family="Georgia, serif">Ban user or delete post</text>
+  <line x1="200" y1="1441" x2="334" y2="1441" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- 5. FE → BE moderation request -->
+  <text x="346" y="1461" font-size="11" fill="#333" font-family="Georgia, serif">PATCH /api/admin/users/:id  or  DELETE /api/admin/posts/:id</text>
+  <line x1="340" y1="1466" x2="504" y2="1466" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Activation bar: BE -->
+  <rect x="506" y="1466" width="8" height="80" rx="2" fill="#378ADD" fill-opacity="0.5"/>
+
+  <!-- 6. BE → DB update/delete -->
+  <text x="516" y="1490" font-size="11" fill="#333" font-family="Georgia, serif">UPDATE user status or DELETE post</text>
+  <line x1="514" y1="1495" x2="674" y2="1495" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- DB return -->
+  <text x="516" y="1515" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Action confirmed</text>
+  <line x1="674" y1="1519" x2="516" y2="1519" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- 7. BE → FE 200 OK -->
+  <text x="346" y="1538" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">200 OK</text>
+  <line x1="506" y1="1542" x2="346" y2="1542" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+  <!-- FE → Admin moderation applied -->
+  <text x="207" y="1558" font-size="11" fill="#888" font-family="Georgia, serif" font-style="italic">Moderation applied</text>
+  <line x1="334" y1="1562" x2="206" y2="1562" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+
+  <!-- Repeat participant labels at bottom -->
+  <rect x="30" y="1580" width="100" height="32" rx="6" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1"/>
+  <text x="80" y="1600" text-anchor="middle" font-size="12" font-weight="600" fill="#26215C" font-family="Georgia, serif">User</text>
+  <rect x="150" y="1580" width="100" height="32" rx="6" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
+  <text x="200" y="1600" text-anchor="middle" font-size="12" font-weight="600" fill="#4A1B0C" font-family="Georgia, serif">Admin</text>
+  <rect x="285" y="1580" width="110" height="32" rx="6" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+  <text x="340" y="1600" text-anchor="middle" font-size="11" font-weight="600" fill="#04342C" font-family="Georgia, serif">Angular Frontend</text>
+  <rect x="455" y="1580" width="110" height="32" rx="6" fill="#E6F1FB" stroke="#378ADD" stroke-width="1"/>
+  <text x="510" y="1600" text-anchor="middle" font-size="11" font-weight="600" fill="#042C53" font-family="Georgia, serif">Spring Boot</text>
+  <rect x="630" y="1580" width="100" height="32" rx="6" fill="#EAF3DE" stroke="#639922" stroke-width="1"/>
+  <text x="680" y="1600" text-anchor="middle" font-size="12" font-weight="600" fill="#173404" font-family="Georgia, serif">PostgreSQL</text>
+  <rect x="790" y="1580" width="100" height="32" rx="6" fill="#FAEEDA" stroke="#BA7517" stroke-width="1"/>
+  <text x="840" y="1600" text-anchor="middle" font-size="12" font-weight="600" fill="#412402" font-family="Georgia, serif">Cloudinary</text>
+
+  <!-- Legend -->
+  <line x1="30" y1="1614" x2="60" y2="1614" stroke="#444" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="65" y="1618" font-size="10" fill="#555" font-family="Georgia, serif">Request</text>
+  <line x1="150" y1="1614" x2="180" y2="1614" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow-return)"/>
+  <text x="185" y="1618" font-size="10" fill="#555" font-family="Georgia, serif">Response</text>
+</svg>

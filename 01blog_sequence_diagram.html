@@ -1,0 +1,145 @@
+
+<div id="mermaid-container"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    actorBkg: dark ? '#3C3489' : '#EEEDFE',
+    actorBorder: dark ? '#AFA9EC' : '#7F77DD',
+    actorTextColor: dark ? '#CECBF6' : '#26215C',
+    activationBorderColor: dark ? '#5DCAA5' : '#0F6E56',
+    activationBkgColor: dark ? '#085041' : '#E1F5EE',
+    noteBkgColor: dark ? '#444441' : '#F1EFE8',
+    noteBorderColor: dark ? '#888780' : '#B4B2A9',
+    noteTextColor: dark ? '#D3D1C7' : '#2C2C2A',
+    labelBoxBkgColor: dark ? '#3C3489' : '#EEEDFE',
+    labelBoxBorderColor: dark ? '#AFA9EC' : '#7F77DD',
+    labelTextColor: dark ? '#CECBF6' : '#26215C',
+    loopTextColor: dark ? '#c2c0b6' : '#3d3d3a',
+    signalColor: dark ? '#9c9a92' : '#73726c',
+    signalTextColor: dark ? '#c2c0b6' : '#3d3d3a',
+    sequenceNumberColor: dark ? '#CECBF6' : '#26215C',
+  },
+  sequence: {
+    diagramMarginX: 20,
+    diagramMarginY: 20,
+    actorMargin: 40,
+    width: 130,
+    height: 40,
+    boxMargin: 10,
+    boxTextMargin: 5,
+    noteMargin: 10,
+    messageMargin: 35,
+    mirrorActors: false,
+    useMaxWidth: true,
+  }
+});
+
+const diagram = `sequenceDiagram
+  autonumber
+  participant U as User
+  participant Ad as Admin
+  participant FE as Angular Frontend
+  participant BE as Spring Boot
+  participant DB as PostgreSQL
+  participant CL as Cloudinary
+
+  rect rgb(237, 237, 254)
+    Note over U,DB: Authentication flow
+    U->>+FE: Sign up (email, password)
+    activate FE
+    FE->>+BE: POST /api/auth/register
+    activate BE
+    Note right of BE: BCrypt hashing
+    BE->>+DB: INSERT user record
+    activate DB
+    DB-->>-BE: User saved
+    BE-->>-FE: 201 Created
+    FE-->>-U: Registration success
+    deactivate FE
+
+    U->>+FE: Log in (credentials)
+    activate FE
+    FE->>+BE: POST /api/auth/login
+    activate BE
+    BE->>+DB: SELECT user by email
+    activate DB
+    DB-->>-BE: User record
+    BE-->>BE: Validate BCrypt hash
+    Note right of BE: JWT generated · Stateless session
+    BE-->>-FE: 200 OK + JWT token
+    FE-->>-U: Token stored in client
+    deactivate FE
+
+    Note over FE,BE: All subsequent requests attach JWT via HTTP Interceptor
+  end
+
+  rect rgb(225, 245, 238)
+    Note over U,CL: Content creation flow
+    U->>+FE: Create post with media
+    activate FE
+    FE->>+BE: POST /api/posts (JWT in header)
+    activate BE
+    Note right of BE: Security filter validates JWT
+    BE->>+CL: Upload media file
+    activate CL
+    CL-->>-BE: Media URL returned
+    BE->>+DB: INSERT post (content + media URL)
+    activate DB
+    DB-->>-BE: Post saved
+    BE-->>-FE: 201 Created
+    FE-->>-U: Post published
+    deactivate FE
+  end
+
+  rect rgb(250, 238, 218)
+    Note over U,DB: Feed consumption flow
+    U->>+FE: Request feed
+    activate FE
+    FE->>+BE: GET /api/feed (JWT in header)
+    activate BE
+    BE->>+DB: SELECT posts from followed users ORDER BY date
+    activate DB
+    DB-->>-BE: Posts list
+    BE-->>-FE: 200 OK + posts payload
+    FE-->>-U: Feed displayed
+    deactivate FE
+  end
+
+  rect rgb(252, 235, 235)
+    Note over Ad,DB: Moderation flow (admin)
+    Ad->>+FE: Access Admin Dashboard
+    activate FE
+    Note left of FE: AdminGuard checks ROLE_ADMIN
+    FE->>+BE: GET /api/admin/dashboard (JWT)
+    activate BE
+    BE-->>BE: Verify ROLE_ADMIN claim
+    BE-->>-FE: Dashboard data
+    FE-->>-Ad: Dashboard displayed
+    deactivate FE
+
+    Ad->>+FE: Ban user or delete post
+    activate FE
+    FE->>+BE: PATCH /api/admin/users/:id or DELETE /api/admin/posts/:id
+    activate BE
+    BE->>+DB: UPDATE user status or DELETE post
+    activate DB
+    DB-->>-BE: Action confirmed
+    BE-->>-FE: 200 OK
+    FE-->>-Ad: Moderation applied
+    deactivate FE
+  end`;
+
+const { svg } = await mermaid.render('seq-svg', diagram);
+document.getElementById('mermaid-container').innerHTML = svg;
+</script>
