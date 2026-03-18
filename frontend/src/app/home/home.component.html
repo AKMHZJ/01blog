@@ -1,0 +1,29 @@
+<div class="home-container" [ngClass]="isDark ? 'theme-dark' : 'theme-light'">
+  <main class="container">
+
+    <h1 class="page-title">Your Feed</h1>
+
+    <!-- Feed Grid -->
+    <div class="feed-grid" *ngIf="feedPosts.length > 0 && !showEmptyRequested">
+      <app-blog-card *ngFor="let post of feedPosts"
+        [id]="post.id"
+        [title]="post.title"
+        [date]="post.date | date"
+        [image]="post.image"
+        [category]="post.category"
+        [author]="post.author"
+        [likeCount]="post.likes.length"
+        [commentCount]="post.comments.length"
+        (cardClick)="onPostClick(post.id)">
+      </app-blog-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="feedLoaded && (feedPosts.length === 0 || showEmptyRequested)">
+      <h2>Your feed is quiet...</h2>
+      <p class="mb-8">Follow some creators to see their stories here.</p>
+      <button (click)="goToDiscover($event)">Discover People</button>
+    </div>
+
+  </main>
+</div>

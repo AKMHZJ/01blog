@@ -1,0 +1,77 @@
+<div class="auth-page" [ngClass]="isDark ? 'theme-dark' : 'theme-light'">
+
+  <button (click)="toggleTheme()" class="icon-btn" style="position: fixed; top: 2rem; right: 2rem;">
+    <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
+  <div class="auth-container">
+    <div class="flex justify-center mb-12">
+      <a routerLink="/" class="logo-wrapper" style="text-decoration: none; color: inherit;">
+        <div class="logo-circle">B</div>
+        <span class="logo-text">Blog Network</span>
+      </a>
+    </div>
+
+    <div class="auth-header">
+      <h1>Create account</h1>
+      <p style="font-family: 'Inter', sans-serif; opacity: 0.6;">
+        Already have an account? <a routerLink="/login" style="color: inherit; text-decoration: underline; text-underline-offset: 4px; transition: opacity 0.3s; &:hover { opacity: 1; }">Log in</a>
+      </p>
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="handleSubmit()">
+      <div class="form-group">
+        <label>Email</label>
+        <input formControlName="email" type="email" placeholder="you@example.com" autocomplete="email" [class.error-border]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" />
+        <div class="error-msg" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+          <span *ngIf="signupForm.get('email')?.hasError('required')">Email is required.</span>
+          <span *ngIf="signupForm.get('email')?.hasError('email')">Please enter a valid email.</span>
+          <span *ngIf="signupForm.get('email')?.hasError('pattern')">Email must end with .com.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Username</label>
+        <input formControlName="username" type="text" placeholder="username" autocomplete="username" [class.error-border]="signupForm.get('username')?.invalid && signupForm.get('username')?.touched" />
+        <div class="error-msg" *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched">
+          <span *ngIf="signupForm.get('username')?.hasError('required')">Username is required.</span>
+          <span *ngIf="signupForm.get('username')?.hasError('minlength')">Must be at least 3 characters.</span>
+          <span *ngIf="signupForm.get('username')?.hasError('pattern')">Only letters and numbers allowed.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Display Name</label>
+        <input formControlName="displayName" type="text" placeholder="Your Name" autocomplete="name" [class.error-border]="signupForm.get('displayName')?.invalid && signupForm.get('displayName')?.touched" />
+        <div class="error-msg" *ngIf="signupForm.get('displayName')?.invalid && signupForm.get('displayName')?.touched">
+          <span *ngIf="signupForm.get('displayName')?.hasError('required')">Display name is required.</span>
+          <span *ngIf="signupForm.get('displayName')?.hasError('pattern')">Only letters and numbers allowed.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input formControlName="password" type="password" placeholder="At least 6 characters" autocomplete="new-password" [class.error-border]="signupForm.get('password')?.invalid && signupForm.get('password')?.touched" />
+        <div class="error-msg" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+          <span *ngIf="signupForm.get('password')?.hasError('required')">Password is required.</span>
+          <span *ngIf="signupForm.get('password')?.hasError('minlength')">Must be at least 6 characters.</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-auth">Create Account</button>
+    </form>
+
+    <p class="terms-notice">
+      By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+    </p>
+
+    <div class="demo-notice">
+      <p>This is a demo application. Your data will only be stored locally in your browser.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,139 @@
+<header class="header" [ngClass]="theme.isDark() ? 'theme-dark' : 'theme-light'">
+
+  <div class="header-container">
+
+    <a (click)="onLogoClick($event)" class="logo-wrapper" style="text-decoration: none; color: inherit; cursor: pointer;">
+      <div class="logo-circle">B</div>
+      <h1 class="logo-text">Blog Network</h1>
+    </a>
+
+    @if (authService.currentUser(); as u) {
+      <div class="user-area flex items-center gap-8">
+
+        <nav class="nav-links">
+          <a routerLink="/feed" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <mat-icon>home</mat-icon> Feed
+          </a>
+          @if (u.role === 'ADMIN') {
+            <a routerLink="/dashboard" routerLinkActive="active">
+              <mat-icon>dashboard</mat-icon> Dashboard
+            </a>
+          }
+          <a routerLink="/my-blog" routerLinkActive="active">
+            <mat-icon>edit_note</mat-icon> My Blog
+          </a>
+          <a routerLink="/discover" routerLinkActive="active">
+            <mat-icon>group</mat-icon> Discover
+          </a>
+          <a routerLink="/about" routerLinkActive="active">
+            <mat-icon>info</mat-icon> About
+          </a>
+        </nav>
+
+        <div class="user-actions">
+          
+          <div class="notification-wrapper" style="position: relative;">
+            <button (click)="toggleNotifications()" class="icon-btn" title="Notifications">
+              <mat-icon [class.has-unread]="unreadCount > 0" 
+                        style="font-size: 20px; width: 20px; height: 20px;">
+                {{ unreadCount > 0 ? 'notifications_active' : 'notifications_none' }}
+              </mat-icon>
+              @if (unreadCount > 0) {
+                <span class="badge">{{ unreadCount }}</span>
+              }
+            </button>
+
+            @if (showNotifications) {
+              <div class="notification-dropdown" [ngClass]="theme.isDark() ? 'theme-dark' : 'theme-light'">
+                <div class="dropdown-header">
+                  <h3>Notifications</h3>
+                  @if (unreadCount > 0) {
+                    <button (click)="markAllAsRead()" class="mark-read-btn">
+                      <mat-icon style="font-size: 16px; width: 16px; height: 16px;">done_all</mat-icon>
+                      Mark all read
+                    </button>
+                  }
+                </div>
+                
+                <div class="dropdown-body">
+                  @for (n of notifications; track n.id) {
+                    <div class="notif-item" [class.unread]="!n.read" (click)="markAsRead(n)">
+                      <img [src]="n.actor?.avatar | imageUrl:'https://placehold.co/32'" class="actor-avatar">
+                      <div class="notif-content">
+                        <p class="notif-text">
+                          <span class="font-bold">{{ n.actor?.displayName || n.actor?.username }}</span>
+                          {{ n.message }}
+                        </p>
+                        <span class="notif-time">{{ n.createdAt | date:'short' }}</span>
+                      </div>
+                      @if (!n.read) {
+                        <span class="unread-dot"></span>
+                      }
+                    </div>
+                  } @empty {
+                    <div class="empty-state">No notifications</div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <button (click)="toggleTheme()" class="icon-btn theme-toggle-btn" title="Toggle theme">
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">
+              {{ theme.isDark() ? 'light_mode' : 'dark_mode' }}
+            </mat-icon>
+          </button>
+
+          <img [src]="u.avatar | imageUrl:'https://placehold.co/32'" alt="User" class="avatar desktop-only">
+
+          <button (click)="logout()" class="icon-btn desktop-only" title="Logout" style="color: #ef4444; opacity: 1;">
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">logout</mat-icon>
+          </button>
+          
+          <button (click)="toggleMobileMenu()" class="icon-btn mobile-menu-btn">
+            <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu Dropdown -->
+      @if (isMobileMenuOpen) {
+        <div class="mobile-menu" [ngClass]="theme.isDark() ? 'theme-dark' : 'theme-light'">
+          <div class="mobile-user-info">
+             <img [src]="u.avatar | imageUrl:'https://placehold.co/40'" alt="User" class="mobile-avatar">
+             <div class="mobile-user-text">
+               <span class="font-bold">{{ u.displayName || u.username }}</span>
+               <span class="opacity-60 text-xs">@{{ u.username }}</span>
+             </div>
+          </div>
+          
+          <nav class="mobile-nav-links">
+            <a routerLink="/feed" routerLinkActive="active" (click)="closeMobileMenu()" [routerLinkActiveOptions]="{exact: true}">
+              <mat-icon>home</mat-icon> Feed
+            </a>
+            @if (u.role === 'ADMIN') {
+              <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">
+                <mat-icon>dashboard</mat-icon> Dashboard
+              </a>
+            }
+            <a routerLink="/my-blog" routerLinkActive="active" (click)="closeMobileMenu()">
+              <mat-icon>edit_note</mat-icon> My Blog
+            </a>
+            <a routerLink="/discover" routerLinkActive="active" (click)="closeMobileMenu()">
+              <mat-icon>group</mat-icon> Discover
+            </a>
+            <a routerLink="/about" routerLinkActive="active" (click)="closeMobileMenu()">
+              <mat-icon>info</mat-icon> About
+            </a>
+          </nav>
+          
+          <div class="mobile-actions">
+            <button (click)="logout()" class="mobile-logout-btn">
+              <mat-icon>logout</mat-icon> Logout
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</header>

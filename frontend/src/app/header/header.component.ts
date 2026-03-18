@@ -1,0 +1,147 @@
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../services/auth.service';
+import { ThemeService } from '../services/theme.service';
+import { NotificationApiService } from '../services/notification-api.service';
+import { Notification } from '../models/notification';
+
+import { ImageUrlPipe } from '../pipes/image-url.pipe';
+import { interval, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-header',
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatIconModule, ImageUrlPipe],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
+})
+export class HeaderComponent implements OnInit, OnDestroy {
+  public authService = inject(AuthService);
+  private router = inject(Router);
+  public theme = inject(ThemeService);
+  private notificationService = inject(NotificationApiService);
+  private cdr = inject(ChangeDetectorRef);
+
+  notifications: Notification[] = [];
+  showNotifications = false;
+  pollingSub: Subscription | null = null;
+  routerSub: Subscription | null = null;
+
+  get user() {
+    return this.authService.currentUser();
+  }
+
+  get isDark() {
+    return this.theme.isDark();
+  }
+
+  get unreadCount() {
+    return this.notifications.filter(n => !n.read).length;
+  }
+
+  isMobileMenuOpen = false;
+
+  constructor() {}
+
+  ngOnInit() {
+    if (this.user) {
+      this.loadNotifications();
+      // Poll every 30 seconds
+      this.pollingSub = interval(30000).subscribe(() => this.loadNotifications());
+
+      // Refresh notifications when navigating to /feed
+      this.routerSub = this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd)
+      ).subscribe((event: any) => {
+        if (event.urlAfterRedirects && event.urlAfterRedirects.includes('/feed')) {
+          this.loadNotifications();
+        }
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+    }
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+  }
+
+  loadNotifications() {
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+        this.cdr.detectChanges();
+      },
+      error: (e) => console.error('Failed to load notifications', e)
+    });
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+    this.cdr.detectChanges();
+  }
+
+  closeNotifications() {
+    this.showNotifications = false;
+    this.cdr.detectChanges();
+  }
+
+  markAsRead(n: Notification) {
+    if (!n.read) {
+      this.notificationService.markAsRead(n.id).subscribe({
+        next: (updated) => {
+          n.read = true;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+    // Navigate if relatedId exists
+    if (n.relatedId) {
+      this.router.navigate(['/post', n.relatedId]);
+      this.showNotifications = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  markAllAsRead() {
+    this.notificationService.markAllAsRead().subscribe({
+      next: () => {
+        this.notifications.forEach(n => n.read = true);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
+  onLogoClick(event: Event) {
+    event.preventDefault();
+    if (this.user) {
+      // Router is configured with onSameUrlNavigation: 'reload'
+      this.router.navigate(['/feed']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+  }
+
+  toggleTheme() {
+    this.theme.toggle();
+  }
+}

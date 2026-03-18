@@ -1,0 +1,170 @@
+<div class="admin-dashboard" [ngClass]="isDark ? 'theme-dark' : 'theme-light'">
+  <div class="max-w-6xl mx-auto">
+    
+    <header class="flex justify-between items-end">
+      <div>
+        <h1 class="font-serif text-5xl font-light">Admin Dashboard</h1>
+        <p class="opacity-60 mt-2">Manage users, posts, and platform statistics.</p>
+      </div>
+      <button (click)="refresh()" class="btn-primary">Refresh Data</button>
+    </header>
+
+    <div class="flex gap-4 mt-12">
+      <button (click)="setTab('overview')" class="tab-btn" [class.active]="activeTab === 'overview'">Overview</button>
+      <button (click)="setTab('users')" class="tab-btn" [class.active]="activeTab === 'users'">Users</button>
+      <button (click)="setTab('posts')" class="tab-btn" [class.active]="activeTab === 'posts'">Posts</button>
+      <button (click)="setTab('reports')" class="tab-btn" [class.active]="activeTab === 'reports'">Reports</button>
+    </div>
+
+    <div *ngIf="loading" style="padding: 5rem 0; text-align: center; opacity: 0.5;">Loading details...</div>
+
+    <!-- Error Alert -->
+    <div *ngIf="error" class="error-alert">
+      {{ error }}
+      <button (click)="error = ''">×</button>
+    </div>
+
+    <!-- Overview -->
+    <div class="stats-grid" *ngIf="!loading && activeTab === 'overview'">
+      <div class="stat-card">
+        <div class="text-xs uppercase opacity-50">Total Users</div>
+        <div class="value font-serif">{{ overview?.users ?? 0 }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase opacity-50">Administrators</div>
+        <div class="value font-serif">{{ overview?.admins ?? 0 }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase opacity-50">Stories Published</div>
+        <div class="value font-serif">{{ overview?.posts ?? 0 }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase opacity-50">Total Comments</div>
+        <div class="value font-serif">{{ overview?.comments ?? 0 }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs uppercase opacity-50">Network Follows</div>
+        <div class="value font-serif">{{ overview?.follows ?? 0 }}</div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-container users-table font-sans" *ngIf="!loading && activeTab === 'users'">
+      <div class="table-header">
+        <div>User</div>
+        <div>Email</div>
+        <div>Role</div>
+        <div>Status</div>
+        <div style="text-align: right;">Actions</div>
+      </div>
+      <ng-container *ngFor="let u of users">
+        <div class="table-row" [class.banned-row]="u.banned" *ngIf="String(u.id) !== String(currentUser?.id)">
+          <div>
+            <div style="font-weight: 500;">{{ u.displayName || u.username }}</div>
+            <div style="font-size: 0.75rem; opacity: 0.5;">@{{ u.username }}</div>
+          </div>
+          <div style="opacity: 0.7;">{{ u.email }}</div>
+          <div>
+            <span style="font-size: 0.8rem; font-weight: 500; opacity: 0.8;">{{ u.role }}</span>
+          </div>
+          <div>
+            <span [class]="u.banned ? 'badge banned' : 'badge active'">
+              {{ u.banned ? 'Banned' : 'Active' }}
+            </span>
+          </div>
+          <div style="text-align: right;" class="flex justify-end gap-4">
+            <button (click)="toggleBan(u)" [style.color]="u.banned ? '#10b981' : '#f59e0b'" style="border: none; background: none; cursor: pointer;">
+              {{ u.banned ? 'Unban' : 'Ban' }}
+            </button>
+            <button (click)="deleteUser(u)" style="color: #ef4444; border: none; background: none; cursor: pointer;">Delete</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Posts Table -->
+    <div class="table-container posts-table font-sans" *ngIf="!loading && activeTab === 'posts'">
+      <div class="table-header">
+        <div>Title</div>
+        <div>Author</div>
+        <div>Category</div>
+        <div>Date</div>
+        <div style="text-align: right;">Actions</div>
+      </div>
+      <div *ngFor="let p of posts" class="table-row">
+        <div style="font-weight: 500;">{{ p.title }}</div>
+        <div style="opacity: 0.7;">@{{ p.author }}</div>
+        <div>
+          <span class="badge category">{{ p.category }}</span>
+        </div>
+        <div style="opacity: 0.5; font-size: 0.875rem;">{{ p.date | date:'short' }}</div>
+        <div style="text-align: right; display: flex; gap: 1rem; justify-content: flex-end;">
+          <button (click)="toggleHidePost(p)" style="border: none; background: none; cursor: pointer;"
+                  [style.color]="p.hidden ? '#10b981' : '#6b7280'">
+            {{ p.hidden ? 'Unhide' : 'Hide' }}
+          </button>
+          <button (click)="deletePost(p)" style="color: #ef4444; border: none; background: none; cursor: pointer;">Delete</button>
+        </div>
+      </div>
+      <div *ngIf="posts.length === 0" style="padding: 3rem; text-align: center; opacity: 0.4;">
+        No posts found on the platform.
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="editor-overlay" *ngIf="confirmationData">
+      <div class="editor-modal" style="max-width: 400px; padding: 0;" [ngClass]="isDark ? 'theme-dark' : 'theme-light'">
+        <div class="editor-header" style="padding: 1.5rem;">
+          <h2 class="font-serif text-2xl">Confirm Action</h2>
+        </div>
+        <div class="editor-body" style="padding: 1.5rem;">
+          <p>{{ confirmationData.message }}</p>
+          <div class="flex gap-4 justify-end mt-4">
+            <button (click)="cancelConfirm()" class="tab-btn" style="opacity: 1; font-size: 0.9rem;">Cancel</button>
+            <button (click)="confirmAction()" class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="table-container reports-table font-sans" *ngIf="!loading && activeTab === 'reports'">
+      <div class="table-header">
+        <div>Reporter</div>
+        <div>Reported Post</div>
+        <div>Reason</div>
+        <div>Status</div>
+        <div style="text-align: right;">Actions</div>
+      </div>
+      <div *ngFor="let r of reports" class="table-row">
+        <div>
+          <div style="font-weight: 500;">{{ r.reporterName }}</div>
+        </div>
+        <div>
+          <div style="font-weight: 500;">{{ r.postTitle || 'Unknown Post' }}</div>
+          <div style="font-size: 0.75rem; opacity: 0.5;">by @{{ r.postAuthorName }}</div>
+        </div>
+        <div style="opacity: 0.7; font-style: italic;">"{{ r.reason }}"</div>
+        <div>
+          <span class="badge" [ngClass]="{'active': r.status === 'PENDING', 'banned': r.status === 'DISMISSED'}">
+            {{ r.status }}
+          </span>
+        </div>
+        <div style="text-align: right;" class="flex justify-end gap-2">
+          <button *ngIf="r.status === 'PENDING'" (click)="resolveReport(r, 'RESOLVED')" style="color: #10b981; border: none; background: none; cursor: pointer;">Resolve</button>
+          <button *ngIf="r.status === 'PENDING'" (click)="resolveReport(r, 'DISMISSED')" style="color: #9ca3af; border: none; background: none; cursor: pointer;">Dismiss</button>
+          <button (click)="deletePostById(r.postId)" style="color: #ef4444; border: none; background: none; cursor: pointer;" title="Delete Post">
+            <mat-icon style="font-size: 18px;">delete</mat-icon>
+          </button>
+          <button (click)="banUserById(r.postAuthorId)" style="color: #f59e0b; border: none; background: none; cursor: pointer;" title="Ban User">
+             <mat-icon style="font-size: 18px;">block</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="reports.length === 0" style="padding: 3rem; text-align: center; opacity: 0.4;">
+        No reports found.
+      </div>
+    </div>
+
+  </div>
+</div>

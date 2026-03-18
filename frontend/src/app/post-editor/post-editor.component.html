@@ -1,0 +1,118 @@
+<div class="editor-overlay">
+  <div class="editor-modal" [ngClass]="isDark ? 'theme-dark' : 'theme-light'">
+
+    <!-- Header / Actions -->
+    <div class="editor-header">
+      <h2 class="font-serif text-2xl font-bold opacity-80">{{ post ? 'Edit Story' : 'New Story' }}</h2>
+      <div class="flex gap-4">
+        <button (click)="cancel.emit()" class="btn-text">Cancel</button>
+        <button (click)="handleSubmit()" [disabled]="isLoading || isUploading || !title.trim()" class="btn-primary small">
+          {{ isLoading ? 'Publishing...' : 'Publish' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="editor-scroll-container">
+      <div class="editor-content-wrapper">
+        
+        <!-- Media Gallery -->
+        <div class="media-section mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold opacity-60 uppercase tracking-wide">Media</h3>
+            <button (click)="fileInput.click()" class="btn-text text-sm flex items-center gap-1">
+              <mat-icon class="text-sm">add</mat-icon> Add Media
+            </button>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*" multiple class="hidden" #fileInput>
+          </div>
+
+          <!-- Media List -->
+          <div class="grid grid-cols-2 gap-4" *ngIf="mediaUrls.length > 0">
+            <div *ngFor="let url of mediaUrls; let i = index" class="relative group rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              
+              <!-- Content -->
+              <ng-container *ngIf="isVideo(url); else imgTemplate">
+                <video [src]="getFullImageUrl(url)" class="w-full h-48 object-cover" controls></video>
+              </ng-container>
+              <ng-template #imgTemplate>
+                <img [src]="getFullImageUrl(url)" class="w-full h-48 object-cover">
+              </ng-template>
+
+              <!-- Overlay Actions -->
+              <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button (click)="setAsCover(url)" *ngIf="!isVideo(url) && image !== url" 
+                        class="bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded backdrop-blur-sm"
+                        title="Set as cover">
+                  Set Cover
+                </button>
+                <span *ngIf="image === url" class="bg-green-600 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                  Cover
+                </span>
+                <button (click)="removeMedia(i)" 
+                        class="bg-red-600/80 hover:bg-red-600 text-white p-1 rounded-full backdrop-blur-sm"
+                        title="Remove">
+                  <mat-icon class="text-sm w-4 h-4 flex items-center justify-center">close</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Placeholder if empty -->
+          <div *ngIf="mediaUrls.length === 0" class="upload-placeholder" (click)="fileInput.click()">
+            <mat-icon class="text-4xl opacity-40">perm_media</mat-icon>
+            <span class="mt-2 text-sm opacity-60">Add images or videos (Max 120MB total)</span>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="title-section mt-8">
+          <input [(ngModel)]="title" name="title" required 
+                 class="input-title font-serif text-4xl font-bold w-full bg-transparent outline-none placeholder-opacity-30" 
+                 placeholder="Title">
+        </div>
+
+        <!-- Category -->
+        <div class="category-section mt-4 mb-8">
+          <select [(ngModel)]="category" name="category" class="input-category bg-transparent opacity-60 text-sm uppercase tracking-wide border-none outline-none cursor-pointer hover:opacity-100 transition">
+            <option>Technology</option>
+            <option>Lifestyle</option>
+            <option>Tech</option>
+            <option>News</option>
+          </select>
+        </div>
+
+        <!-- Editor Toolbar -->
+        <div class="editor-toolbar sticky top-0 z-20 flex items-center gap-2 py-3 border-b border-gray-100 dark:border-gray-800 bg-opacity-95 backdrop-blur-sm transition-colors"
+             [ngClass]="isDark ? 'bg-black' : 'bg-white'">
+          
+          <!-- Spacer to push Write/Preview to the right -->
+          <div class="flex-1"></div>
+
+          <div class="flex ml-auto bg-gray-100 dark:bg-gray-800 rounded p-1">
+             <button (click)="showPreview = false" class="text-xs px-3 py-1 rounded transition" 
+                     [class.bg-white]="!showPreview && !isDark" 
+                     [class.bg-gray-600]="!showPreview && isDark"
+                     [class.shadow-sm]="!showPreview">Write</button>
+             <button (click)="showPreview = true" class="text-xs px-3 py-1 rounded transition" 
+                     [class.bg-white]="showPreview && !isDark"
+                     [class.bg-gray-600]="showPreview && isDark"
+                     [class.shadow-sm]="showPreview">Preview</button>
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-section min-h-[400px] mt-6">
+          <textarea *ngIf="!showPreview" 
+                    [(ngModel)]="content" name="content" 
+                    class="textarea-content w-full h-full min-h-[500px] bg-transparent outline-none resize-none text-lg leading-relaxed font-serif" 
+                    placeholder="Tell your story..."></textarea>
+          
+          <div *ngIf="showPreview" class="preview-content prose dark:prose-invert max-w-none text-lg leading-relaxed font-serif">
+             <markdown [data]="content || '*Nothing written yet...*'"></markdown>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
